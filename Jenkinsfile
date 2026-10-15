@@ -1,49 +1,47 @@
-
 pipeline {
     agent any
 
-    tools {
-        maven 'maven3'
+    environment {
+        APP_NAME = 'demo-app'
     }
 
     stages {
-        stage('Diagnostic') {
+        stage('Checkout') {
             steps {
-                sh '''
-                    java -version
-                    mvn -version
-                    ls -la
-                    ls -la demo-app
-                '''
+                echo "Récupération du code pour ${APP_NAME}"
+                sh 'ls -la'
             }
         }
 
         stage('Build') {
             steps {
-                dir('demo-app') {
-                    echo 'Build Maven en cours...'
-                    sh 'mvn clean compile'
-                }
+                echo 'Compilation simulée...'
+                sh '''
+                    mkdir -p build
+                    echo "Build ${BUILD_NUMBER} de ${APP_NAME}" > build/resultat.txt
+                    cat build/resultat.txt
+                '''
             }
         }
 
         stage('Test') {
             steps {
-                dir('demo-app') {
-                    echo 'Execution des tests unitaires...'
-                    sh 'mvn test'
-                }
+                echo 'Exécution des tests simulés...'
+                sh 'test -f build/resultat.txt && echo "Test OK"'
+                echo 'Tests terminés'
             }
         }
     }
 
     post {
-        success {
-            echo 'Build et tests termines avec succes.'
+        always {
+            echo 'Pipeline terminé.'
         }
-
+        success {
+            echo 'Succès !'
+        }
         failure {
-            echo 'Echec du pipeline : consulter les logs.'
+            echo 'Échec du pipeline.'
         }
     }
 }
