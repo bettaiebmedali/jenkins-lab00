@@ -31,7 +31,11 @@ pipeline {
                 echo 'Tests terminés'
             }
         }
+
+        
     }
+
+    
 
     post {
         always {
